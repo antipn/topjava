@@ -1,0 +1,25 @@
+1.+ Реализовать сервлет с отображением в таблице списка еды (в памяти и БЕЗ учета пользователя)
+Деплоиться в Tomcat лучше как war exploded: нет упаковки в war и при нажатой кнопке Update Resources on Frame Deactivation можно обновляться css, html, jsp без передеплоя.
+При изменении web.xml, добавлении методов, классов необходим redeploy.
+1.1+ По аналогии с UserServlet добавить MealServlet и meals.jsp
+Задеплоить приложение (war) в Tomcat c applicationContext=topjava (приложение должно быть доступно по http://localhost:8080/topjava)
+Попробовать разные деплои в Tomcat, remote и local debug
+1.2+ Сделать отображения списка еды в JSP в таблице, цвет записи в таблице зависит от параметра excess (красный/зеленый).
+1.2.1 Список еды захардкодить (те проинициализировать в коде, желательно чтобы в проекте инициализация была только в одном месте). Норму калорий (caloriesPerDay) сделать в коде константой
+1.2.2 Время выводить без 'T'
+1.2.3 Список выводим БЕЗ фильтрации по startTime/endTime
+1.2.4 С обработкой исключений пока можно не заморачиваться, мы будем красиво обрабатывать в конце стажировки
+1.2.5 Вариант реализации:
+из сервлета преобразуете еду в List<MealTo>;
+кладете список в запрос (request.setAttribute);
+делаете forward на jsp для отрисовки таблицы (при redirect атрибуты теряются).
+JSP работает через геттеры: meal.dateTime в JSP вызывает meal.getDateTime()
+в JSP для цикла можно использовать JSTL tag forEach. Для подключения JSTL в pom.xml и шапку JSP нужно добавить:
+    <dependency>
+       <groupId>javax.servlet</groupId>
+       <artifactId>jstl</artifactId>
+       <version>1.2</version>
+    </dependency>
+
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    ...
