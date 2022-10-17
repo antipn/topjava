@@ -22,6 +22,8 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<Integer, User> repositoryUser = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
+    public static final int USER_ID = 1;
+    public static final int ADMIN_ID = 2;
     //удаляем пользователя по id с типом ответа boolean
     @Override
     public boolean delete(int id) {
