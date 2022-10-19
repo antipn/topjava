@@ -1,13 +1,18 @@
 package ru.javawebinar.topjava.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.getEndInclusive;
+import static ru.javawebinar.topjava.util.DateTimeUtil.getStartInclusive;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -40,5 +45,9 @@ public class MealService {
     }
 
 //potential method get meals by meal and user id + start and end time
+    public List<Meal> getBetweenHalfOpen(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId){
+        return repository.getBetweenHalfOpen(getStartInclusive(startDate),getEndInclusive(endDate),userId);
+    }
+
 
 }

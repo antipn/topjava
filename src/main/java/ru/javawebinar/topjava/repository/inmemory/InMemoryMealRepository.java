@@ -4,10 +4,14 @@ import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.Util;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository.USER_ID;
@@ -51,14 +55,30 @@ public class InMemoryMealRepository implements MealRepository {
         return userMealsMap == null ? null : userMealsMap.get(id); //если список еды пустой возвращаем null, иначе значение еды
     }
 
+
     @Override
-    public List<Meal> getAll(int userId) {
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDate, LocalDateTime endDate, int userId) {
+        Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
+
+        return getAllFiltered(userId,meal -> Util.isBetweenHalfOpen(meal.getDateTime(),startDate,endDate));
+    }
+
+    public List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
 
         return CollectionUtils.isEmpty(userMealsMap) ? Collections.emptyList() :
                 userMealsMap.values().stream()
+                        .filter(filter)
                         .sorted(Comparator.comparing((Meal meal) -> meal.getDateTime()).reversed()) //по дате в обратном порядке
                         .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<Meal> getAll(int userId) {
+        Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
+
+        return getAllFiltered(userId, meal -> true);
     }
 }
 
