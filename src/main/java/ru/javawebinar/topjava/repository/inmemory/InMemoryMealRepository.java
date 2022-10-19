@@ -19,14 +19,15 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal ->save(meal,USER_ID));
+        MealsUtil.meals.forEach(meal -> save(meal, USER_ID));
 
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
         //получаем map по user id, если у пользователя еще нет еды -> создаем новую map c его пустой едой для заполнения
-        Map<Integer, Meal> userMealsMap = repositoryMeal.computeIfAbsent(userId, newMap -> new ConcurrentHashMap<Integer, Meal>(newMap));
+        //Map<Integer, Meal> userMealsMap = repositoryMeal.computeIfAbsent(userId, newMap -> new ConcurrentHashMap<Integer, Meal>(newMap));
+        Map<Integer, Meal> userMealsMap = repositoryMeal.computeIfAbsent(userId, uId -> new ConcurrentHashMap<>());
         if (meal.isNew()) { //еда новая и у нее нет еще id
             meal.setId(counter.incrementAndGet());
             userMealsMap.put(meal.getId(), meal); //добавляем еду в хранилище еды пользователя
@@ -51,7 +52,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
 
         return CollectionUtils.isEmpty(userMealsMap) ? Collections.emptyList() :
