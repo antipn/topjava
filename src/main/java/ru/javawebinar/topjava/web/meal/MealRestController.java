@@ -55,7 +55,7 @@ public class MealRestController {
 
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
-        assureIdConsistent(meal, id);
+        assureIdConsistent(meal, id); //проверяем что id еды нулевой или равен id который пришел! хорошая практика
         log.info("update {} with id={}", meal, userId);
         service.update(meal, userId);
     }
@@ -63,8 +63,8 @@ public class MealRestController {
     public List<MealTo> getBetweenHalfOpen(@Nullable LocalDate startDate, @Nullable LocalTime startTime, @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
         log.info("get between dates ({} {}) time ({} {}) for userid={}", startDate, endDate, startTime, endTime, userId);
-        List<Meal> mealsDateFiltered = service.getBetweenHalfOpen(startDate,endDate,userId);
-        return MealsUtil.getTos(mealsDateFiltered,SecurityUtil.authUserCaloriesPerDay());
+        List<Meal> mealsDateFiltered = service.getBetweenHalfOpen(startDate,endDate,userId); //отфильтровали по дате, чтобы затем отфильтровать по времени
+        return MealsUtil.getFilteredTos(mealsDateFiltered,SecurityUtil.authUserCaloriesPerDay(),startTime,endTime); //тут отфильтровали дополнительно еще и по времени
     }
 
 }

@@ -1,12 +1,12 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.Util;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository.USER_ID;
 
+@Repository
 public class InMemoryMealRepository implements MealRepository {
 
     // Map <userId, Map <mealId, meal>>
@@ -57,12 +58,11 @@ public class InMemoryMealRepository implements MealRepository {
 
 
     @Override
-    public List<Meal> getBetweenHalfOpen(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
-
-        return getAllFiltered(userId,meal -> Util.isBetweenHalfOpen(meal.getDateTime(),startDate,endDate));
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return getAllFiltered(userId, meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime));
     }
 
+    //использую патерн стратегия мы параметизируем метод
     public List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
 
@@ -74,10 +74,9 @@ public class InMemoryMealRepository implements MealRepository {
 
     }
 
+    //здесь мы не фильтруем, поэтому выводим все что есть у пользователя и предикат всегда true
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> userMealsMap = repositoryMeal.get(userId);
-
         return getAllFiltered(userId, meal -> true);
     }
 }
