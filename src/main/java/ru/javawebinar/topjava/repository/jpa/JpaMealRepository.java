@@ -35,25 +35,33 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return em.createQuery("DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userID")
+        return em.createQuery("DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId")
+                .setParameter("id", id)
+                .setParameter("userId", userId)
                 .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
         return em.createQuery("SELECT m FROM Meal m WHERE m.id =:id AND m.user.id=:userId", Meal.class)
+                .setParameter("id", id)
+                .setParameter("userId", userId)
                 .getSingleResult();
     }
 
     @Override
     public List<Meal> getAll(int userId) {
         return em.createQuery("SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC", Meal.class)
+                .setParameter("userId", userId)
                 .getResultList();
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return em.createQuery("SELECT m FROM Meal m WHERE m.user=:userId AND m.dateTime>=:startDateTime AND m.dateTime<:endDateTime ORDER BY m.dateTime DESC", Meal.class)
+                .setParameter("userId", userId)
+                .setParameter("startDateTime", startDateTime)
+                .setParameter("endDateTime", endDateTime)
                 .getResultList();
     }
 }
