@@ -28,8 +28,10 @@ public class Meal extends AbstractBaseEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) //указываем имя нашего поля в таблице meals
-    @NotNull
+    @JoinColumn(name = "user_id", nullable = false) //указываем имя нашего поля в таблице meals foreign key
+    //мы тянем в нашу таблицу данные и будем хранить не пользователя а его id
+    //тут у нас много пользователей в этой колонке а в таблице пользователей эти значения уникальны
+    @NotNull //проверка на пустое значение JVM а не ORM!
     private User user;
 
     public Meal() {
